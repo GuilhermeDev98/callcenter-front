@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "../Layouts/DashboardLayout";
-
+import Api from '../../Services/Api'
 import TableWrapper from '../../Components/Table';
 
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import AddIcon from '@mui/icons-material/Add';
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -15,39 +14,28 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import SettingsIcon from '@mui/icons-material/Settings';
-
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
-import Divider from '@mui/material/Divider';
-
-
-import Api from '../../Services/Api'
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
+
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
-
-
-function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-}
 const Permissions = () => {
+
     const [roles, SetRoles] = useState([])
     const [permissions, SetPermissions] = useState([])
     const [roleModalOpen, SetRoleModalOpen] = useState(false)
@@ -55,11 +43,12 @@ const Permissions = () => {
     const [alert, SetAlert] = useState({ open: false, message: '', status: 'success' })
     const [loading, SetLoading] = useState(true)
     const [Paginate, SetPaginate] = useState([])
+    const [PermissionsSelecteds, SetPermissionsSelecteds] = useState([])
 
-    const GetAllRoles = async (pageToGo = 1) => {
+    const GetAllRoles = (pageToGo = 1) => {
         SetLoading(true)
         try {
-            const { data } = await Api.get(`roles/?page=${pageToGo}`).then(({data}) => {
+            Api.get(`roles/?page=${pageToGo}`).then(({ data }) => {
                 SetRoles(data.data)
                 SetLoading(false)
                 SetPaginate(data)
@@ -79,8 +68,9 @@ const Permissions = () => {
     }
 
     const HandleStorePermission = async () => {
+        console.log({ "name": permission, "permissions": PermissionsSelecteds })
         try {
-            Api.post('roles', { "name": permission }).then(({ data }) => {
+            Api.post('roles', { "name": permission, "permissions": PermissionsSelecteds }).then(({ data }) => {
                 GetAllRoles()
                 SetRoleModalOpen(false)
                 SetAlert({ open: true, message: 'Regra Cadastrada Com Sucesso !', status: 'success' })
@@ -89,6 +79,7 @@ const Permissions = () => {
                 console.log(error.context)
             })
         } catch (error) {
+            console.log(error)
         }
     }
 
@@ -100,6 +91,32 @@ const Permissions = () => {
     const handleClose = () => {
         SetRoleModalOpen(false);
     };
+
+    const HandlePermissionSelect = (e) => {
+        //Verifica se a permissão já foi adicionada
+        const hasInserted = PermissionsSelecteds.includes(e.target.value)
+
+        if (hasInserted) {
+            //função para remover permissão do array
+            var filtered = PermissionsSelecteds.filter(function (value, index, arr) {
+                return value != e.target.value;
+            });
+            SetPermissionsSelecteds(filtered)
+        } else {
+            //função para isnerir permissão no array
+            SetPermissionsSelecteds([...PermissionsSelecteds, e.target.value])
+            console.log('inseriu ', e.target.value)
+        }
+    }
+
+    const HandleShowTooltipPermisions = index => {
+        if(roles[index].permissions < 1){
+            return 'Nenhuma Permissão Cadastrada'
+        }{
+            return roles[index].permissions.map(({name}) => `${name}, `)
+        }
+
+    }
 
     useEffect(() => {
         GetAllRoles()
@@ -124,13 +141,14 @@ const Permissions = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Nome</TableCell>
+                                <TableCell align="center">Permissões</TableCell>
                                 <TableCell align="right">
                                     <SettingsIcon />
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {roles && roles.map((row) => (
+                            {roles && roles.map((row, index) => (
                                 <TableRow
                                     key={row.name}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -138,14 +156,19 @@ const Permissions = () => {
                                     <TableCell component="th" scope="row">
                                         {row.name}
                                     </TableCell>
-                                    <TableCell align="right">{row.name}</TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={HandleShowTooltipPermisions(index)}>
+                                            <Chip label={row.permissions.length} />
+                                        </Tooltip>
+                                    </TableCell>
+                                    <TableCell align="right">Options</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Stack spacing={2} sx={{marginTop: '1%'}}>
-                    <Pagination sx={{ margin: '0 auto'}}  page={Paginate.current_page} count={Math.ceil(Paginate.total/Paginate.per_page)} onChange={(e, page) => GetAllRoles(page)} />
+                <Stack spacing={2} sx={{ marginTop: '1%' }}>
+                    <Pagination sx={{ margin: '0 auto' }} page={Paginate.current_page} count={Math.ceil(Paginate.total / Paginate.per_page)} onChange={(e, page) => GetAllRoles(page)} />
                 </Stack>
             </TableWrapper>
 
@@ -165,7 +188,7 @@ const Permissions = () => {
                     <FormGroup style={{ display: 'flex', flexDirection: "row" }}>
                         {permissions &&
                             permissions.map(permission =>
-                                <FormControlLabel key={permission.id} control={<Checkbox />} value={permission.id} label={permission.name} onChange={e => console.log(e.target.value)} />
+                                <FormControlLabel key={permission.id} control={<Checkbox />} value={permission.id} label={permission.name} onChange={HandlePermissionSelect} />
                             )}
                     </FormGroup>
                 </DialogContent>
