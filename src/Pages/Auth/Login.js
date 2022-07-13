@@ -1,49 +1,130 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Api from '../../Services/Api';
 import { useHistory } from "react-router-dom";
-import Axios from 'axios'
+
+import Avatar from '@mui/material/Avatar';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import LoadingButton from '@mui/lab/LoadingButton';
+import Alert from '@mui/material/Alert';
+
+
+import logo from './img/logo.png'
+
+function Copyright(props) {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+      {'Copyright © '}
+      <Link color="inherit" href="https://mui.com/">
+        Livre Sistemas
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
 
 const Login = ({ location }) => {
 
-  let history = useHistory();
-  const [email, SetEmail] = useState('');
-  const [password, SetPassword] = useState('');
+  let history = useHistory()
+  const [email, SetEmail] = useState('')
+  const [password, SetPassword] = useState('')
+  const [Loading, SetLoading] = useState(false)
+  const [ErrorMessage, SetErrorMessage] = useState()
 
-  const GetWebphoneUrl = async (ramal: 1000) => {
-
-  }
-
-  const HandleLogin = async () => {
+  const handleSubmit = async () => {
+    SetLoading(true)
     try {
-      //const { data, status } = await Api.post('auth/login', { email, password })
-      const webphoneUrl = await Axios.get(`https://voice-api.zenvia.com/webphone?ramal=1000`, {}, {'Access-Token': '44537239cdf17a743548c50edd75351a'})
-      console.log(webphoneUrl)
+      const { data, status } = await Api.post('auth/login', { email, password })
 
-      //if (status === 200 && data.data.token)
-        //localStorage.setItem("call@token", data.data.token)
-        //return history.push('/dashboard')
+      console.log(data, status)
 
+      if (status === 200 && data.data.token)
+        localStorage.setItem("call@token", data.data.token)
+        localStorage.setItem("call@userName", data.data.user.name)
+        localStorage.setItem("call@userId", data.data.user.id)
+        localStorage.setItem("call@userRole", 'TI')
+        localStorage.setItem("call@userPermissions", JSON.stringify(["/dashboard"]))
 
-    } catch (error) {
-      console.log(error)
+      return history.push('/dashboard')
+
+    } catch ({response}) {
+      SetErrorMessage(response.data.message)
+      SetLoading(false)
     }
   }
 
-
   return (
     <>
-      <form>
-        <div>
-          <label htmlFor="email">E-Mail</label>
-          <input type="text" name="email" placeholder="E-Mail" onChange={(e) => SetEmail(e.target.value)} />
-        </div>
+      <Container component="main" maxWidth="xs">
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 100, height: 100 }} src={logo} />
+          <Typography component="h1" variant="h5">
+            SIT® 1.0
+          </Typography>
+          {ErrorMessage && <Alert severity="error" sx={{width: '100%'}}>{ErrorMessage}</Alert>}
+          <Box component="form" noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Login"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={e => SetEmail(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Senha"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={e => SetPassword(e.target.value)}
 
-        <div>
-          <label htmlFor="password">Senha</label>
-          <input type="password" name="password" placeholder="Senha" onChange={(e) => SetPassword(e.target.value)} />
-        </div>
-      </form>
-      <button onClick={() => HandleLogin()}>logar</button>
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Lembrar?"
+            />
+            <LoadingButton
+              loading={Loading}
+              onClick={() => handleSubmit()}
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Entrar
+            </LoadingButton>
+            <Grid container>
+              <Grid item xs>
+                <Link href="#" variant="body2">
+                  Esqueceu a Senha?
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+        <Copyright sx={{ mt: 8, mb: 4 }} />
+      </Container>
     </>
   )
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Typography from '@mui/material/Typography';
@@ -22,12 +23,29 @@ import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
 
 
+
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { PropaneSharp } from "@mui/icons-material";
 import PageTitle from "./PageTitle";
+import DoDisturbIcon from '@mui/icons-material/DoDisturb';
+
+import NotCanAccessImage from '../../assets/images/notCanAccess.png'
 
 const DashboardLayout = (props) => {
+
+    let history = useHistory()
+    const canAccess = localStorage.getItem("call@canAccess")
+
+    const HandleSignOut = () => {
+        localStorage.removeItem("call@token")
+        localStorage.removeItem("call@userName")
+        localStorage.removeItem("call@userId")
+        localStorage.removeItem("call@userRole")
+
+        return history.push('/login')
+    }
+
     return (
         <div style={{ display: 'flex', background: "#F0F2F5" }}>
             <div style={{ width: '25vw', height: '100vh', display: 'flex', position: 'fixed' }}>
@@ -45,7 +63,7 @@ const DashboardLayout = (props) => {
                     <div style={{ display: "flex", flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
                         <div >
                             <Typography variant="h6" component="h6" style={{ textAlign: 'center', color: "white" }}>
-                                Caller 1.0
+                                SIT® 1.0
                             </Typography>
                             <Divider light style={{ marginTop: '10px', textAlign: 'center' }}>
                                 <IconButton aria-label="play" size="large">
@@ -56,16 +74,7 @@ const DashboardLayout = (props) => {
                         </div>
                         <div style={{ marginTop: '10px', alignSelf: 'center' }}>
                             <ButtonGroup variant="primary" size="small" aria-label="outlined primary button group">
-                                <IconButton aria-label="play" >
-                                    <DialpadIcon style={{ color: 'white' }} />
-                                </IconButton>
-                                <IconButton aria-label="play" >
-                                    <LocalDiningIcon style={{ color: 'white' }} />
-                                </IconButton>
-                                <IconButton aria-label="play" >
-                                    <AirlineSeatReclineExtraIcon style={{ color: 'white' }} />
-                                </IconButton>
-                                <IconButton aria-label="play" >
+                                <IconButton aria-label="play" onClick={HandleSignOut}>
                                     <PowerSettingsNewIcon style={{ color: 'white' }} />
                                 </IconButton>
                             </ButtonGroup>
@@ -77,7 +86,7 @@ const DashboardLayout = (props) => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginBottom: '20px' }}>
                     <div>
                         <div role="presentation" onClick={() => console.log('presentation')}>
-                            <Breadcrumbs aria-label="breadcrumb">
+                            {/* <Breadcrumbs aria-label="breadcrumb">
                                 <Link underline="hover" color="inherit" href="/">
                                     MUI
                                 </Link>
@@ -96,17 +105,24 @@ const DashboardLayout = (props) => {
                                 >
                                     Breadcrumbs
                                 </Link>
-                            </Breadcrumbs>
+                            </Breadcrumbs> */}
                             <PageTitle title={props.title} />
                         </div>
                     </div>
                 </div>
                 <div>
-                    {props.children}
+                    {canAccess == 'true' && props.children}
+                    {canAccess == "false" && (
+                        <Paper sx={{textAlign: 'center'}}>
+                            <DoDisturbIcon fontSize="large" sx={{ color: 'red', paddingTop: '2%', fontSize: 100 }} />
+                            <h1>Você Não Pode Acessar Esta Página</h1>
+                        </Paper>
+                    )}
                 </div>
             </div>
         </div>
     );
+
 }
 
 export default DashboardLayout;

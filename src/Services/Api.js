@@ -10,7 +10,7 @@ const Api = axios.create({
     }
 });
 
-//axios.interceptors.request.use(() => console.log('ok'));
+axios.interceptors.request.use(() => console.log('ok'));
 
 
 export default Api
