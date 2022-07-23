@@ -17,7 +17,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Grid from '@mui/material/Grid';
 
 
-import { Input } from '@mui/material';
+import { CardContent, CardHeader, Input } from '@mui/material';
 
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
@@ -200,66 +200,75 @@ const Historic = ({ Attendances }) => {
           </Toolbar>
         </AppBar>
         <Grid sx={{ margin: '5%' }}>
-          <Grid container spacing={2} sx={{ padding: '2px' }}>
-            <Grid item xs={6} sx={{ marginBottom: '5px' }}>
-              <TextField label="Protocolo" value={AttendenceSelected.protocol} variant="standard" fullWidth disabled size="small" sx={{ marginBottom: '5px' }} />
-              <Grid container spacing={2}>
-                <Grid item xs={6} sx={{ marginBottom: '5px' }}>
-                  <TextField label="Classificação" value={AttendenceSelected.classification} variant="standard" fullWidth disabled size="small" sx={{ marginBottom: '5px' }} />
+          <Grid container spacing={2} sx={{ padding: '10px' }}>
+            <Grid item xs={4} sx={{ marginBottom: '5px' }}>
+              <Card sx={{ padding: '2%' }}>
+                <TextField label="Protocolo" value={AttendenceSelected.protocol} variant="standard" fullWidth disabled size="small" sx={{ marginBottom: '5px' }} />
+                <Grid container spacing={2}>
+                  <Grid item xs={6} sx={{ marginBottom: '5px' }}>
+                    <TextField label="Classificação" value={AttendenceSelected.classification} variant="standard" fullWidth disabled size="small" sx={{ marginBottom: '5px' }} />
+                  </Grid>
+                  <Grid item xs={6} sx={{ marginBottom: '5px' }}>
+                    <TextField label="Canal de Entrada" value={AttendenceSelected.input_channel} variant="standard" fullWidth disabled size="small" sx={{ marginBottom: '5px' }} />
+                  </Grid>
+                  <Grid item xs={6} sx={{ marginBottom: '5px' }}>
+                    <FormControl fullWidth variant="standard" size="small" disabled={!canEditProtocol()}>
+                      <InputLabel>Status</InputLabel>
+                      <Select
+                        value={status}
+                        onChange={handleChangeStatus}
+                      >
+                        <MenuItem value={"open"}>Aberto</MenuItem>
+                        <MenuItem value={"closed"}>Fechado</MenuItem>
+                        <MenuItem value={"in_treatment"}>Em Tratamento</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={6} sx={{ marginBottom: '5px' }}>
+                    <FormControl fullWidth variant="standard" size="small" disabled={!canEditProtocol()}>
+                      <InputLabel>Encaminhamento</InputLabel>
+                      <Select
+                        value={forwarding}
+                        onChange={handleChangeForwarding}
+                      >
+                        <MenuItem value={"Procedente"}>Procedente</MenuItem>
+                        <MenuItem value={"Improcedente"}>Improcedente</MenuItem>
+                        <MenuItem value={"Em Análise"}>Em Análise</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField label="Canal De Retorno" value={AttendenceSelected.return_channel} disabled variant="standard" fullWidth size="small" sx={{ marginBottom: '5px' }} />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField label="Telefone de Retorno" value={AttendenceSelected.return_phone} disabled variant="standard" fullWidth size="small" sx={{ marginBottom: '5px' }} />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <TextField label="Nome Do Contato" value={AttendenceSelected.contact_name} disabled variant="standard" fullWidth size="small" sx={{ marginBottom: '5px' }} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField label="Resumo" value={AttendenceSelected.summary} disabled variant="standard" fullWidth size="small" sx={{ marginBottom: '5px' }} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField label="Memorando" value={AttendenceSelected.memo} disabled variant="standard" multiline fullWidth size="small" sx={{ marginBottom: '5px' }} />
+                  </Grid>
                 </Grid>
-                <Grid item xs={6} sx={{ marginBottom: '5px' }}>
-                  <TextField label="Canal de Entrada" value={AttendenceSelected.input_channel} variant="standard" fullWidth disabled size="small" sx={{ marginBottom: '5px' }} />
-                </Grid>
-                <Grid item xs={6} sx={{ marginBottom: '5px' }}>
-                  <FormControl fullWidth variant="standard" size="small" disabled={!canEditProtocol()}>
-                    <InputLabel>Status</InputLabel>
-                    <Select
-                      value={status}
-                      onChange={handleChangeStatus}
-                    >
-                      <MenuItem value={"open"}>Aberto</MenuItem>
-                      <MenuItem value={"closed"}>Fechado</MenuItem>
-                      <MenuItem value={"in_treatment"}>Em Tratamento</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={6} sx={{ marginBottom: '5px' }}>
-                  <FormControl fullWidth variant="standard" size="small" disabled={!canEditProtocol()}>
-                    <InputLabel>Encaminhamento</InputLabel>
-                    <Select
-                      value={forwarding}
-                      onChange={handleChangeForwarding}
-                    >
-                      <MenuItem value={"Procedente"}>Procedente</MenuItem>
-                      <MenuItem value={"Improcedente"}>Improcedente</MenuItem>
-                      <MenuItem value={"Em Análise"}>Em Análise</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField label="Canal De Retorno" value={AttendenceSelected.return_channel} disabled variant="standard" fullWidth size="small" sx={{ marginBottom: '5px' }} />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField label="Telefone de Retorno" value={AttendenceSelected.return_phone} disabled variant="standard" fullWidth size="small" sx={{ marginBottom: '5px' }} />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField label="Nome Do Contato" value={AttendenceSelected.contact_name} disabled variant="standard" fullWidth size="small" sx={{ marginBottom: '5px' }} />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField label="Resumo" value={AttendenceSelected.summary} disabled variant="standard" fullWidth size="small" sx={{ marginBottom: '5px' }} />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField label="Memorando" value={AttendenceSelected.memo} disabled variant="standard" multiline fullWidth size="small" sx={{ marginBottom: '5px' }} />
-                </Grid>
-              </Grid>
 
-              {canEditProtocol() && <Button variant="contained" component="span" onClick={() => HandleEditProtocol()} fullWidth sx={{ marginBottom: '5px' }}>
-                Salvar
-              </Button>}
+                {canEditProtocol() && <Button variant="contained" component="span" onClick={() => HandleEditProtocol()} fullWidth sx={{ marginBottom: '5px' }}>
+                  Salvar
+                </Button>}
+              </Card>
 
             </Grid>
-            <Grid item xs={6} sx={{ marginBottom: '5px' }}>
-              <TimelineOfMemos AttendanceId={AttendenceSelected.id} />
+            <Grid item xs={8} sx={{ marginBottom: '5px' }}>
+              <Card>
+                <CardHeader title="Timeline" />
+                <Divider />
+                <CardContent>
+                  <TimelineOfMemos AttendanceId={AttendenceSelected.id} />
+                </CardContent>
+
+              </Card>
             </Grid>
           </Grid>
         </Grid>

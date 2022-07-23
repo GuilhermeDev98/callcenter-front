@@ -71,7 +71,7 @@ const TimelineOfMemos = ({ AttendanceId }) => {
             <Typography variant="h6" component="span">
               {row.creator.name.split(' ')[0]} - {row.creator.id}
             </Typography>
-            <Typography>{row.description}</Typography>
+            <Typography fontSize={14}>{row.description}</Typography>
             <div sx={{ textAlign: 'center' }}>
               <ButtonGroup >
                 <Tooltip title="NomeDoArquvio.pdf">

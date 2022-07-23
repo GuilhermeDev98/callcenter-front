@@ -47,9 +47,11 @@ import TableRow from '@mui/material/TableRow';
 import LinearProgress from '@mui/material/LinearProgress';
 import GroupIcon from '@mui/icons-material/Group';
 import BadgeIcon from '@mui/icons-material/Badge';
-
+import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
+import EngineeringIcon from '@mui/icons-material/Engineering';
 
 import Api from '../../Services/Api'
+import Can from '../../Components/Can'
 
 const Sidebar = () => {
 
@@ -61,16 +63,16 @@ const Sidebar = () => {
     const HandleCloseDialogSearchClient = () => SetDialogSearchClient(false)
 
     const SeachClient = async (search) => {
-        if(search.length == 0) {
+        if (search.length == 0) {
             return;
         }
 
         SetSearchClient(true)
         try {
-            const {data} = await Api.get(`clients/search/${search}`)
+            const { data } = await Api.get(`clients/search/${search}`)
             SetClients(data)
             SetSearchClient(false)
-        } catch ({response}) {
+        } catch ({ response }) {
             console.log(response)
             SetSearchClient(false)
         }
@@ -79,46 +81,75 @@ const Sidebar = () => {
     return (
         <>
             <List>
-                <Link to="/dashboard" style={{ textDecoration: 'none' }}>
-                    <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
-                        <ListItemIcon style={{ background: '' }}>
-                            <DashboardIcon style={{ color: 'white' }} />
-                        </ListItemIcon>
-                        <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Dashboard" />
-                    </ListItem>
-                </Link>
-                <Link style={{ textDecoration: 'none' }} onClick={() => HandleOpenDialogSearchClient()}>
-                    <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
-                        <ListItemIcon style={{ background: '' }}>
-                            <SupportAgentIcon style={{ color: 'white' }} />
-                        </ListItemIcon>
-                        <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Atendimento" />
-                    </ListItem>
-                </Link>
-                <Link to="/dashboard/permissions" style={{ textDecoration: 'none' }}>
-                    <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
-                        <ListItemIcon style={{ background: '' }}>
-                            <AccountTreeIcon style={{ color: 'white' }} />
-                        </ListItemIcon>
-                        <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Regras" />
-                    </ListItem>
-                </Link>
-                <Link to="/dashboard/clients" style={{ textDecoration: 'none' }}>
-                    <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
-                        <ListItemIcon style={{ background: '' }}>
-                            <GroupIcon style={{ color: 'white' }} />
-                        </ListItemIcon>
-                        <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Clientes" />
-                    </ListItem>
-                </Link>
-                <Link to="/dashboard/employees" style={{ textDecoration: 'none' }}>
-                    <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
-                        <ListItemIcon style={{ background: '' }}>
-                            <BadgeIcon style={{ color: 'white' }} />
-                        </ListItemIcon>
-                        <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Funcionários" />
-                    </ListItem>
-                </Link>
+                <Can permission='dashboard.show'>
+                    <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+                        <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
+                            <ListItemIcon style={{ background: '' }}>
+                                <DashboardIcon style={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Dashboard" />
+                        </ListItem>
+                    </Link>
+                </Can>
+                <Can permission='attendance.show'>
+                    <Link style={{ textDecoration: 'none' }} onClick={() => HandleOpenDialogSearchClient()}>
+                        <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
+                            <ListItemIcon style={{ background: '' }}>
+                                <SupportAgentIcon style={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Atendimento" />
+                        </ListItem>
+                    </Link>
+                </Can>
+                <Can permission='role.show'>
+                    <Link to="/dashboard/roles" style={{ textDecoration: 'none' }}>
+                        <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
+                            <ListItemIcon style={{ background: '' }}>
+                                <PeopleOutlineIcon style={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Regras" />
+                        </ListItem>
+                    </Link>
+                </Can>
+                <Can permission='permission.show'>
+                    <Link to="/dashboard/permissions" style={{ textDecoration: 'none' }}>
+                        <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
+                            <ListItemIcon style={{ background: '' }}>
+                                <AccountTreeIcon style={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Permissões" />
+                        </ListItem>
+                    </Link></Can>
+                <Can permission='client.show'>
+                    <Link to="/dashboard/clients" style={{ textDecoration: 'none' }}>
+                        <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
+                            <ListItemIcon style={{ background: '' }}>
+                                <GroupIcon style={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Clientes" />
+                        </ListItem>
+                    </Link>
+                </Can>
+                <Can permission='employee.show'>
+                    <Link to="/dashboard/employees" style={{ textDecoration: 'none' }}>
+                        <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
+                            <ListItemIcon style={{ background: '' }}>
+                                <BadgeIcon style={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Funcionários" />
+                        </ListItem>
+                    </Link>
+                </Can>
+                <Can permission='employee.show'>
+                    <Link to="/dashboard/employees" style={{ textDecoration: 'none' }}>
+                        <ListItem style={{ background: '#3C96EF', borderRadius: '10px', marginTop: '10px', }}>
+                            <ListItemIcon style={{ background: '' }}>
+                                <EngineeringIcon style={{ color: 'white' }} />
+                            </ListItemIcon>
+                            <ListItemText sx={{ color: 'white', fontSize: '5px' }} primary="Configurações" />
+                        </ListItem>
+                    </Link>
+                </Can>
             </List>
             <Dialog open={DialogSearchClient} onClose={HandleCloseDialogSearchClient} fullWidth>
                 <DialogTitle>Buscar Cliente</DialogTitle>
@@ -162,7 +193,7 @@ const Sidebar = () => {
                                 ))}
                             </TableBody>
                         </Table>
-                    </TableContainer> }
+                    </TableContainer>}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={HandleCloseDialogSearchClient}>Fechar</Button>

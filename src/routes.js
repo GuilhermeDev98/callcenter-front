@@ -4,10 +4,11 @@ import { isAuthenticated } from './Services/Auth';
 
 import Login from './Pages/Auth/Login'
 import Dashboard from './Pages/Dashboard'
-import Permissions from './Pages/Dashboard/Permissions';
+import Roles from './Pages/Dashboard/Role';
 import PanelAttendance from './Pages/Dashboard/Attendance';
 import Client from './Pages/Dashboard/Client'
 import Employee from './Pages/Dashboard/Employee';
+import Permissions from './Pages/Dashboard/Permission';
 
 
 const PrivateRoutes = ({ component: Component, ...rest }) => (
@@ -30,6 +31,7 @@ const Routes = () => (
             <Route exact path="/login" component={ Login } />
             <PrivateRoutes path="/app" component={ () => <h1>Você esta logado</h1> } />
             <PrivateRoutes path="/dashboard" exact component={ Dashboard } />
+            <PrivateRoutes path="/dashboard/roles" component={ Roles } />
             <PrivateRoutes path="/dashboard/permissions" component={ Permissions } />
             <PrivateRoutes path="/dashboard/attendance/:userId" component={ PanelAttendance } />
             <PrivateRoutes path="/dashboard/clients" component={ Client } />

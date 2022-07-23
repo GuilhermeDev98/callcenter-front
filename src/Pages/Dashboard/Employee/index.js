@@ -25,6 +25,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Api from '../../../Services/Api';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import SettingsIcon from '@mui/icons-material/Settings';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 import Pagination from '@mui/material/Pagination';
@@ -44,6 +48,7 @@ const Employee = () => {
     const [Employees, SetEmployees] = useState([])
     const [Paginate, SetPaginate] = useState([])
     const [loading, SetLoading] = useState(true)
+    const [Sectors, SetSectors] = useState([])
 
     const handleClickOpen = () => {
         SetRoleModalOpen(true);
@@ -72,25 +77,48 @@ const Employee = () => {
     const GetAllEmployees = async (pageToGo = 1) => {
         SetLoading(true)
         try {
-            Api.get(`employees/?page=${pageToGo}`).then(({data}) => {
+            Api.get(`employees/?page=${pageToGo}`).then(({ data }) => {
                 SetEmployees(data.data)
                 SetPaginate(data)
                 SetLoading(false)
             })
-            
+
         } catch (error) {
             SetAlert({ open: true, message: 'Erro Ao Carregar Funcionários', status: 'error' })
         }
     }
 
+    const GetAllSectors = () => {
+        try {
+            Api.get(`roles`).then(({ data }) => {
+                SetSectors(data.data)
+                SetLoading(false)
+            })
+
+        } catch (error) {
+            SetAlert({ open: true, message: 'Erro Ao Carregar Setores', status: 'error' })
+        }
+    }
+
+    const HandleDeleteEmployee = (id) => {
+        SetLoading(true)
+        Api.delete(`employees/${id}`).then(({ data }) => {
+            GetAllEmployees()
+            SetLoading(false)
+            SetAlert({ open: true, message: 'Funcionário Deletado Com Sucesso', status: 'error' })
+        })
+    }
+
+
     useEffect(() => {
         GetAllEmployees()
+        GetAllSectors()
     }, [])
 
     return (
         <DashboardLayout>
 
-            <TableWrapper 
+            <TableWrapper
                 tableTitle="Funcionários"
                 tableOptions={
                     <ButtonGroup disableElevation variant="contained" aria-label="outlined primary button group">
@@ -107,9 +135,9 @@ const Employee = () => {
                             <TableRow>
                                 <TableCell>Id</TableCell>
                                 <TableCell align="right">Nome</TableCell>
-                                <TableCell align="right">E-mail</TableCell>
+                                <TableCell align="right">Login</TableCell>
                                 <TableCell align="right">Setor</TableCell>
-                                <TableCell align="right">Ativo</TableCell>
+                                <TableCell align="right"><SettingsIcon /></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -124,14 +152,18 @@ const Employee = () => {
                                     <TableCell align="right">{row.name}</TableCell>
                                     <TableCell align="right">{row.email}</TableCell>
                                     <TableCell align="right">{row.role.name}</TableCell>
-                                    <TableCell align="right">Sim</TableCell>
+                                    <TableCell align="right" >
+                                        <IconButton onClick={() => HandleDeleteEmployee(row.id)}>
+                                            <DeleteIcon color="error" />
+                                        </IconButton>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Stack spacing={2} sx={{marginTop: '1%'}}>
-                    <Pagination sx={{ margin: '0 auto'}}  page={Paginate.current_page} count={Math.ceil(Paginate.total/Paginate.per_page)} onChange={(e, page) => GetAllEmployees(page)} />
+                <Stack spacing={2} sx={{ marginTop: '1%' }}>
+                    <Pagination sx={{ margin: '0 auto' }} page={Paginate.current_page} count={Math.ceil(Paginate.total / Paginate.per_page)} onChange={(e, page) => GetAllEmployees(page)} />
                 </Stack>
             </TableWrapper>
             <Dialog open={roleModalOpen} onClose={handleClose} fullWidth
@@ -163,14 +195,7 @@ const Employee = () => {
                             label="Setor"
                             onChange={(e) => SetSector(e.target.value)}
                         >
-                            <MenuItem value={"N1"}>Atendimento N1</MenuItem>
-                            <MenuItem value={"BACKOFFICE"}>BackOffice</MenuItem>
-                            <MenuItem value={"CRC"}>Recuperação de Cliente</MenuItem>
-                            <MenuItem value={"RETENCAO"}>Retenção</MenuItem>
-                            <MenuItem value={"TI"}>TI</MenuItem>
-                            <MenuItem value={"SUPERVISAO"}>Supervisão</MenuItem>
-                            <MenuItem value={"COORDENACAO"}>Coordenador</MenuItem>
-                            <MenuItem value={"GERENCIA"}>Gerente</MenuItem>
+                            {Sectors && Sectors.map(sector => <MenuItem key={sector.id} value={sector.name}>{sector.name}</MenuItem>)}
                         </Select>
                     </FormControl>
                 </DialogContent>

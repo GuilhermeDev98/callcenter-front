@@ -11,6 +11,8 @@ import Historic from './Historic'
 import ClientProfile from './ClientProfile';
 import ListOfMemos from './ListOfMemos';
 import { Typography } from '@mui/material';
+import Card from '@mui/material/Card';
+
 
 import Api from '../../../Services/Api'
 
@@ -95,6 +97,7 @@ const PanelAttendance = () => {
             <Tab label="Memorandos" />
           </Tabs>
         </Box>
+        <Card>
         <TabPanel value={value} index={0}>
           {AttendanceUUID && <Tabulation AttendanceUUID={AttendanceUUID} Client={Client} />}
         </TabPanel>
@@ -107,6 +110,7 @@ const PanelAttendance = () => {
         <TabPanel value={value} index={3}>
           <ListOfMemos />
         </TabPanel>
+        </Card>
       </>
     }
   </DashboardLayout>

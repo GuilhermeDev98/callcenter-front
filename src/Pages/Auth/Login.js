@@ -44,19 +44,17 @@ const Login = ({ location }) => {
     try {
       const { data, status } = await Api.post('auth/login', { email, password })
 
-      console.log(data, status)
-
       if (status === 200 && data.data.token)
         localStorage.setItem("call@token", data.data.token)
         localStorage.setItem("call@userName", data.data.user.name)
         localStorage.setItem("call@userId", data.data.user.id)
-        localStorage.setItem("call@userRole", 'TI')
-        localStorage.setItem("call@userPermissions", JSON.stringify(["/dashboard"]))
+        localStorage.setItem("call@userRole", data.data.user.role.name)
+        localStorage.setItem("call@userPermissions", data.data.user.role.permissions.map(e => e.name))
+        return history.push('/dashboard')
 
-      return history.push('/dashboard')
-
-    } catch ({response}) {
-      SetErrorMessage(response.data.message)
+    } catch (err) {
+      console.log(err)
+      //SetErrorMessage(err)
       SetLoading(false)
     }
   }
