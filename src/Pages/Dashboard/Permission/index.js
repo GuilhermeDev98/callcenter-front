@@ -55,7 +55,7 @@ const Permissions = () => {
                 SetPaginate(data)
             })
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
     }
 
