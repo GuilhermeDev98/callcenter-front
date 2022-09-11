@@ -214,7 +214,7 @@ const Teams = () => {
         })
 
         SetEmployees(mapa)
-    }, [ModalAddEmployeeInTeam])
+    }, [TeamUsers])
 
     return (
         <div>
@@ -347,8 +347,7 @@ const Teams = () => {
                     <FormGroup style={{ display: 'flex', flexDirection: "row" }}>
                         {Employees &&
                             Employees.map(employee =>
-
-                                <FormControlLabel key={employee.id} control={<Switch size="small"  checked={employee.selected ? employee.selected : false} />} value={employee.id} label={`${employee.id} - ${employee.name}`} onChange={() => HandleToogleUser(employee.name)} />
+                                <FormControlLabel key={employee.id} control={<Switch size="small" disabled={TeamUsers.supervisor_id === employee.id}  checked={employee.selected} />} value={employee.id} label={`${employee.id} - ${employee.name}`} onChange={() => HandleToogleUser(employee.name)} />
                             )}
                     </FormGroup>
                 </DialogContent>
