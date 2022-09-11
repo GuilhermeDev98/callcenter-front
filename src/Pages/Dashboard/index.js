@@ -13,6 +13,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Sidebar from '../Layouts/Sidebar'
 import StatusOfConnection from '../Layouts/StatusOfConnection'
 import ResponsiveAppBar from "../Layouts/ResponsiveAppBar";
+import GenerateDashboard from "./GenerateDashboard";
 
 const Dashboard = () => {
     let navigate = useNavigate()
@@ -88,7 +89,7 @@ const Dashboard = () => {
           <div style={{ width: '80vw', height: '100%', background: '', padding: '20px', color: 'rgb(52, 71, 103)', marginLeft: '20vw' }}>
               <ResponsiveAppBar/>
               <div>
-                  {outlet || <h1>Sem Outlet</h1>}
+                  {outlet || <GenerateDashboard /> }
               </div>
           </div>
       </div>

@@ -125,6 +125,15 @@ const Historic = ({ Attendances }) => {
     }
   }
 
+  const sendProtocolBySMS = async (id) => {
+    try {
+      await Api.post(`attendances/protocol/${id}`)
+      alert('Enviado Com Sucesso')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const HandleEditProtocol = async () => {
     try {
       const { data } = await Api.put(`attendances/${AttendenceSelected.id}`, {
@@ -181,7 +190,7 @@ const Historic = ({ Attendances }) => {
                 <TableCell align="center">{row.created_at}</TableCell>
                 <TableCell align="center">
                   <VisibilityIcon onClick={() => handleOpen(row, index)} />
-                  <ShareIcon />
+                  <ShareIcon onClick={() => sendProtocolBySMS(row.id)}/>
                 </TableCell>
               </TableRow>
             ))}
